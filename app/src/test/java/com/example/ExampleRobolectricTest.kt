@@ -67,5 +67,22 @@ class ExampleRobolectricTest {
     assertEquals(1, records[1].level)
     assertEquals(10, records[1].moves)
   }
+
+  @Test
+  fun `test LevelManager seed determinism across runs`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val levelManager = com.example.data.LevelManager(context)
+
+    val runA = levelManager.generateLevel(42)
+    val runB = levelManager.generateLevel(42)
+
+    assertEquals(runA.size, runB.size)
+    for (i in runA.indices) {
+      assertEquals(runA[i].balls.size, runB[i].balls.size)
+      for (b in runA[i].balls.indices) {
+        assertEquals(runA[i].balls[b].color, runB[i].balls[b].color)
+      }
+    }
+  }
 }
 
