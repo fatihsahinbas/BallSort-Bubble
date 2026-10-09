@@ -6,7 +6,6 @@ import com.example.ad.AdConfig
 import com.example.audio.SoundManager
 import com.example.data.GamePreferences
 import com.example.data.LeaderboardManager
-import com.example.data.LevelManager
 import com.example.model.BallSortGenerator
 import com.example.model.MoveHistory
 import com.example.model.Tube
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 class GameViewModel(
     private val preferences: GamePreferences,
     private val soundManager: SoundManager,
-    private val levelManager: LevelManager? = null,
     private val leaderboardManager: LeaderboardManager? = null
 ) : ViewModel() {
 
@@ -80,7 +78,7 @@ class GameViewModel(
      */
     fun loadLevel(level: Int) {
         _currentLevel.value = level
-        val generated = levelManager?.generateLevel(level) ?: BallSortGenerator.generateLevel(level)
+        val generated = BallSortGenerator.generateLevel(level)
         initialTubesForLevel = generated
         _tubes.value = generated
         _selectedTubeIndex.value = null
@@ -93,10 +91,6 @@ class GameViewModel(
         undoStack.clear()
 
         startTimer()
-
-        viewModelScope.launch {
-            levelManager?.saveCurrentLevel(level)
-        }
     }
 
     /**
@@ -199,10 +193,7 @@ class GameViewModel(
                 onHapticFeedback()
 
                 // Check win condition
-                val isSolved = levelManager?.isLevelSolved(newTubes)
-                    ?: BallSortGenerator.isBoardSolved(newTubes)
-
-                if (isSolved) {
+                if (BallSortGenerator.isBoardSolved(newTubes)) {
                     handleLevelWin()
                 }
             } else {
@@ -232,8 +223,6 @@ class GameViewModel(
         }
 
         viewModelScope.launch {
-            levelManager?.unlockLevel(nextLevel)
-            levelManager?.incrementCompletedLevels()
             leaderboardManager?.recordLevelCompletion(
                 level = completedLevel,
                 moves = moves,
@@ -282,6 +271,11 @@ class GameViewModel(
         val newTubeId = currentTubes.size
         val newTube = Tube(id = newTubeId, capacity = 4, balls = emptyList())
         _tubes.value = currentTubes + newTube
+        // Keep undo snapshots in sync so undoing an earlier move does not drop the bonus tube
+        for (i in undoStack.indices) {
+            val entry = undoStack[i]
+            undoStack[i] = entry.copy(tubes = entry.tubes + newTube.copy(id = entry.tubes.size))
+        }
         _bonusTubesCount.value += 1
         soundManager.playButtonClick()
         return true

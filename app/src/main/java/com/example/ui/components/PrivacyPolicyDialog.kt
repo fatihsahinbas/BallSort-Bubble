@@ -39,25 +39,28 @@ Bu gizlilik politikası, "Top Sıralama Bulmacası" mobil uygulamamızın kullan
 Uygulamamız tamamen çevrimdışı (offline) çalışacak şekilde tasarlanmıştır. Kullanıcı hesabı, kayıt, giriş, bulut yedekleme veya herhangi bir kişisel veri toplama mekanizması içermez. İsim, e-posta, konum veya benzeri kişisel verileriniz asla toplanmaz veya sunucularımıza iletilmez.
 
 2. Cihaz İçi Yerel Depolama
-Oyun ilerlemeniz (açılan bölümler, ses ve titreşim tercihleri, reklam kaldırma durumu) yalnızca cihazınızın yerel hafızasında (SharedPreferences) saklanır. Cihazınızdan dışarı aktarılmaz.
+Oyun ilerlemeniz (açılan bölümler, en iyi skorlar, ses ve titreşim tercihleri, reklam kaldırma durumu) yalnızca cihazınızın yerel hafızasında saklanır. Cihazınızdan dışarı aktarılmaz.
 
 3. Kullanılan İzinler
 Uygulamamız yalnızca şu temel izinleri kullanır:
 - INTERNET & ACCESS_NETWORK_STATE: Yalnızca Google AdMob reklamlarının ve Google Play faturalandırma hizmetinin çalışması için.
 - com.google.android.gms.permission.AD_ID: Google reklam kimliği için standart Play Hizmetleri izni.
+- VIBRATE: Oyun içi dokunsal geri bildirim (Ayarlar'dan kapatılabilir).
 Kamera, mikrofon, konum, rehber veya dosya erişimi gibi hiçbir hassas izin istenmez.
 
 4. Üçüncü Taraf Hizmetleri ve SDK'lar
 Uygulamamız yalnızca güvenilir Google hizmetlerini içerir:
 - Google Mobile Ads (AdMob) ve Google UMP: Kişiselleştirilmiş veya kişiselleştirilmemiş reklam gösterimi ve rıza yönetimi için.
 - Google Play Faturalandırma: "Reklamları Kaldır" tek seferlik uygulama içi satın alımının güvenle işlenmesi için.
+
+Google AdMob, reklam sunmak, ölçmek ve dolandırıcılığı önlemek amacıyla reklam kimliği, IP adresi, cihaz bilgileri ve reklam etkileşimleri gibi verileri toplayıp Google ile paylaşabilir. Ayrıntılar: https://policies.google.com/technologies/partner-sites
 Uygulamamızda hiçbir üçüncü taraf analiz (Analytics) veya çökme raporlama (Crashlytics vb.) SDK'sı bulunmamaktadır.
 
 5. Rıza ve Gizlilik Ayarları
 Avrupa Ekonomik Alanı (AEA) ve Birleşik Krallık kullanıcıları için Google UMP rıza formu sunulur. Gizlilik tercihlerinizi oyun içi Ayarlar menüsünden dilediğiniz zaman güncelleyebilirsiniz.
 
 İletişim:
-Gizlilik politikası hakkında sorularınız için geliştiriciyle iletişime geçebilirsiniz.
+Sorularınız için Google Play mağaza sayfasındaki geliştirici e-posta adresinden ulaşabilirsiniz.
         """.trimIndent()
     } else {
         """
@@ -68,28 +71,31 @@ Last Updated: October 2026
 This Privacy Policy explains how Ball Sort Puzzle handles user data.
 
 1. No Personal Data Collection
-Our game is designed to operate offline. There are no accounts, logins, registrations, or cloud databases. We do not collect, store, or share your personal information (such as name, email, contacts, or location).
+Our game is designed to operate offline. There are no accounts, logins, registrations, or cloud databases. The developer does not collect, store, or receive your personal information (such as name, email, contacts, or location).
 
 2. Local Device Storage Only
-Your gameplay progress (unlocked levels, sound/vibration toggles, ad-removal status) is stored strictly on your local device via Android SharedPreferences. No game data is ever sent to external servers.
+Your gameplay progress (unlocked levels, best scores, sound/vibration toggles, ad-removal status) is stored strictly on your local device. No game data is ever sent to external servers.
 
 3. Android Permissions
 The application requires only the following standard permissions:
 - INTERNET & ACCESS_NETWORK_STATE: Required solely for Google AdMob and Google Play Billing network connectivity.
 - com.google.android.gms.permission.AD_ID: Standard Google Advertising ID permission for ad serving.
+- VIBRATE: In-game haptic feedback (can be turned off in Settings).
 No sensitive permissions (camera, location, contacts, microphone, or storage) are requested.
 
 4. Third-Party Services
 The app uses only official Google SDKs:
 - Google Mobile Ads (AdMob) & Google User Messaging Platform (UMP): For optional reward ads, interstitials, and user privacy consent management.
 - Google Play Billing: For processing the one-time "Remove Ads" in-app purchase securely.
+
+Google AdMob may collect and share with Google data such as the advertising ID, IP address, device information and ad interactions to serve and measure ads and prevent fraud. Details: https://policies.google.com/technologies/partner-sites
 No third-party analytics or crash reporting SDKs are bundled.
 
 5. Privacy Choices & Consent
 You can manage or withdraw your advertising consent at any time via the "Privacy Settings" button inside the in-game Settings menu.
 
 Contact:
-If you have any questions regarding this Privacy Policy, please contact the developer.
+For questions, use the developer email shown on the Google Play store listing.
         """.trimIndent()
     }
 
@@ -118,7 +124,7 @@ If you have any questions regarding this Privacy Policy, please contact the deve
         },
         confirmButton = {
             val context = androidx.compose.ui.platform.LocalContext.current
-            val privacyUrl = "https://fatihsahinbas.github.io/ballsort/privacy"
+            val privacyUrl = "https://fatihsahinbas.github.io/BallSort-Bubble/privacy/"
             androidx.compose.foundation.layout.Row {
                 TextButton(
                     onClick = {

@@ -159,7 +159,6 @@ class BillingManager(
                 // User cancelled purchase dialog
             }
             BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED -> {
-                setAdsRemoved(true)
                 queryExistingPurchases()
             }
             else -> {
@@ -207,19 +206,20 @@ class BillingManager(
             .build()
 
         billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
-            var hasRemoveAds = false
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                for (purchase in purchases) {
-                    if (purchase.products.contains(AdConfig.PRODUCT_REMOVE_ADS)) {
-                        hasRemoveAds = true
-                        handlePurchase(purchase)
-                    }
-                }
+            if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
+                // Offline / service error: keep the cached entitlement untouched
+                onFinished?.invoke(_isAdsRemoved.value)
+                return@queryPurchasesAsync
             }
-            if (hasRemoveAds) {
-                setAdsRemoved(true)
+            // PENDING purchases (e.g. cash payment not completed yet) must NOT unlock the product
+            val owned = purchases.filter {
+                it.products.contains(AdConfig.PRODUCT_REMOVE_ADS) &&
+                        it.purchaseState == Purchase.PurchaseState.PURCHASED
             }
-            onFinished?.invoke(hasRemoveAds)
+            owned.forEach { handlePurchase(it) }
+            // Authoritative answer from Play: also revokes the entitlement after a refund
+            setAdsRemoved(owned.isNotEmpty())
+            onFinished?.invoke(owned.isNotEmpty())
         }
     }
 

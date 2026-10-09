@@ -2,5 +2,5 @@
   "name": "Ball Sort Puzzle",
   "description": "A clean, offline-first color ball sorting puzzle game with procedural levels, colorblind symbols, and adaptive layout.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

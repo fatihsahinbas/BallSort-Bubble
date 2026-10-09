@@ -22,7 +22,6 @@ import com.example.audio.SoundManager
 import com.example.audio.VibrationManager
 import com.example.data.GamePreferences
 import com.example.data.LeaderboardManager
-import com.example.data.LevelManager
 import com.example.ui.GameViewModel
 import com.example.ui.screens.GameScreen
 import com.example.ui.screens.LevelSelectScreen
@@ -39,7 +38,6 @@ enum class AppScreen {
 class MainActivity : ComponentActivity() {
 
     private lateinit var preferences: GamePreferences
-    private lateinit var levelManager: LevelManager
     private lateinit var leaderboardManager: LeaderboardManager
     private lateinit var soundManager: SoundManager
     private lateinit var vibrationManager: VibrationManager
@@ -53,7 +51,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         preferences = GamePreferences(this)
-        levelManager = LevelManager(this)
         leaderboardManager = LeaderboardManager(this)
         soundManager = SoundManager().apply {
             isSoundEnabled = preferences.soundEnabled.value
@@ -66,7 +63,7 @@ class MainActivity : ComponentActivity() {
             startConnection()
         }
         adManager = AdManager(this, umpManager, billingManager)
-        viewModel = GameViewModel(preferences, soundManager, levelManager, leaderboardManager)
+        viewModel = GameViewModel(preferences, soundManager, leaderboardManager)
 
         // Request UMP consent before initializing ads
         umpManager.gatherConsent(this) { canRequestAds ->

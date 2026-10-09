@@ -3,6 +3,7 @@ package com.example
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.model.BallSortGenerator
+import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -59,7 +60,7 @@ class ExampleRobolectricTest {
     leaderboard.recordLevelCompletion(level = 2, moves = 18, timeSeconds = 40)
     leaderboard.recordLevelCompletion(level = 1, moves = 10, timeSeconds = 20) // Better score for level 1
 
-    val records = kotlinx.coroutines.flow.first(leaderboard.topRecords)
+    val records = leaderboard.topRecords.first()
     assertEquals(2, records.size)
     assertEquals(2, records[0].level)
     assertEquals(18, records[0].moves)
