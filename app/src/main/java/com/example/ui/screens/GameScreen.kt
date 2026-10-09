@@ -257,12 +257,12 @@ fun GameScreen(
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Action Bar (Undo & Rewarded Ad Bonuses)
+                // Primary Game Controls Bar (Undo, Restart, Add Tube)
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                        .padding(horizontal = 4.dp, vertical = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Undo Button
@@ -278,7 +278,9 @@ fun GameScreen(
                                 showHelpDialog = true
                             }
                         },
-                        modifier = Modifier.testTag("undo_button"),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag("undo_button"),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Icon(
@@ -286,17 +288,41 @@ fun GameScreen(
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = stringResource(R.string.undo, remainingUndos),
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp
                         )
                     }
 
-                    // Extra Tube / Help Button
+                    // Restart Button
+                    OutlinedButton(
+                        onClick = { showRestartDialog = true },
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag("restart_action_button"),
+                        shape = RoundedCornerShape(20.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = stringResource(R.string.restart),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp
+                        )
+                    }
+
+                    // Extra Tube Button
                     FilledTonalButton(
                         onClick = { showHelpDialog = true },
-                        modifier = Modifier.testTag("add_tube_button"),
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag("add_tube_button"),
                         shape = RoundedCornerShape(20.dp)
                     ) {
                         Icon(
@@ -304,10 +330,11 @@ fun GameScreen(
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = stringResource(R.string.add_tube),
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 13.sp
                         )
                     }
                 }

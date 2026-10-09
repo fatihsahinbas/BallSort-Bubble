@@ -3,6 +3,7 @@ package com.example
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.model.BallSortGenerator
+import kotlinx.coroutines.flow.first
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -59,12 +60,29 @@ class ExampleRobolectricTest {
     leaderboard.recordLevelCompletion(level = 2, moves = 18, timeSeconds = 40)
     leaderboard.recordLevelCompletion(level = 1, moves = 10, timeSeconds = 20) // Better score for level 1
 
-    val records = kotlinx.coroutines.flow.first(leaderboard.topRecords)
+    val records = leaderboard.topRecords.first()
     assertEquals(2, records.size)
     assertEquals(2, records[0].level)
     assertEquals(18, records[0].moves)
     assertEquals(1, records[1].level)
     assertEquals(10, records[1].moves)
+  }
+
+  @Test
+  fun `test LevelManager seed determinism across runs`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val levelManager = com.example.data.LevelManager(context)
+
+    val runA = levelManager.generateLevel(42)
+    val runB = levelManager.generateLevel(42)
+
+    assertEquals(runA.size, runB.size)
+    for (i in runA.indices) {
+      assertEquals(runA[i].balls.size, runB[i].balls.size)
+      for (b in runA[i].balls.indices) {
+        assertEquals(runA[i].balls[b].color, runB[i].balls[b].color)
+      }
+    }
   }
 }
 
