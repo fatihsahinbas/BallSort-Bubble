@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Top Sıralama Bulmacası</string>
+    <string name="play">Oyna</string>
+    <string name="levels">Bölümler</string>
+    <string name="level_label">Bölüm %1$d</string>
+    <string name="level_completed">Bölüm Tamamlandı!</string>
+    <string name="level_completed_desc">Tüm renkleri başarıyla sıraladınız!</string>
+    <string name="next_level">Sonraki Bölüm</string>
+    <string name="restart">Yeniden Başlat</string>
+    <string name="restart_confirm">Bölümü baştan başlatmak istiyor musunuz?</string>
+    <string name="cancel">İptal</string>
+    <string name="confirm">Onayla</string>
+    <string name="undo">Geri Al (%1$d)</string>
+    <string name="no_undos_left">Geri alma hakkı kalmadı</string>
+    <string name="add_tube">Tüp Ekle</string>
+    <string name="get_undos">+3 Geri Al Hakkı</string>
+    <string name="settings">Ayarlar</string>
+    <string name="sound_effects">Ses Efektleri</string>
+    <string name="vibration">Titreşim</string>
+    <string name="colorblind_symbols">Renk Körü Sembolleri</string>
+    <string name="privacy_settings">Gizlilik Ayarları (Rıza)</string>
+    <string name="privacy_policy">Gizlilik Politikası</string>
+    <string name="remove_ads">Reklamları Kaldır</string>
+    <string name="ads_removed">Reklamlar Kaldırıldı</string>
+    <string name="restore_purchases">Satın Alımları Geri Yükle</string>
+    <string name="rewarded_offer_title">Yardım İster misiniz?</string>
+    <string name="rewarded_offer_desc">Kısa bir video izleyerek bu bölüm için fazladan bir tüp veya +3 geri alma hakkı kazanın.</string>
+    <string name="watch_ad_tube">Video İzle (+1 Tüp)</string>
+    <string name="watch_ad_undos">Video İzle (+3 Geri Al)</string>
+    <string name="ad_not_ready">Reklam henüz hazır değil. Lütfen bağlantınızı kontrol edin.</string>
+    <string name="purchase_success">Teşekkürler! Reklamlar kalıcı olarak kaldırıldı.</string>
+    <string name="purchase_restored">Satın alımlar başarıyla geri yüklendi!</string>
+    <string name="purchase_not_found">Önceki satın alım bulunamadı.</string>
+    <string name="purchase_failed">Satın alma tamamlanamadı.</string>
+    <string name="tube_added_success">Ekstra tüp eklendi!</string>
+    <string name="undos_added_success">3 geri alma hakkı eklendi!</string>
+    <string name="locked">Kilitli</string>
+    <string name="menu">Menü</string>
+    <string name="back">Geri</string>
+    <string name="close">Kapat</string>
+</resources>
