@@ -148,6 +148,7 @@ class AdManager(
                     rewardedAd = null
                     _isRewardedLoaded.value = false
                     preloadRewarded()
+                    onFailedToLoad()
                     onDismissed()
                 }
             }

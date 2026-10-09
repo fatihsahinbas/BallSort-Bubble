@@ -38,4 +38,9 @@
     <string name="menu">Menu</string>
     <string name="back">Back</string>
     <string name="close">Close</string>
+    <string name="leaderboard">Leaderboard</string>
+    <string name="top_scores">Top 5 Best Records</string>
+    <string name="no_records_yet">Complete levels to set records!</string>
+    <string name="moves_format">%1$d Moves</string>
+    <string name="time_format">%1$02d:%2$02d</string>
 </resources>

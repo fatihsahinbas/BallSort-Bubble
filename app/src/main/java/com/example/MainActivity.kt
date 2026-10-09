@@ -19,7 +19,9 @@ import com.example.ad.AdManager
 import com.example.ad.BillingManager
 import com.example.ad.UMPManager
 import com.example.audio.SoundManager
+import com.example.audio.VibrationManager
 import com.example.data.GamePreferences
+import com.example.data.LeaderboardManager
 import com.example.data.LevelManager
 import com.example.ui.GameViewModel
 import com.example.ui.screens.GameScreen
@@ -38,7 +40,9 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var preferences: GamePreferences
     private lateinit var levelManager: LevelManager
+    private lateinit var leaderboardManager: LeaderboardManager
     private lateinit var soundManager: SoundManager
+    private lateinit var vibrationManager: VibrationManager
     private lateinit var umpManager: UMPManager
     private lateinit var billingManager: BillingManager
     private lateinit var adManager: AdManager
@@ -50,15 +54,19 @@ class MainActivity : ComponentActivity() {
 
         preferences = GamePreferences(this)
         levelManager = LevelManager(this)
+        leaderboardManager = LeaderboardManager(this)
         soundManager = SoundManager().apply {
             isSoundEnabled = preferences.soundEnabled.value
+        }
+        vibrationManager = VibrationManager(this).apply {
+            isVibrationEnabled = preferences.vibrationEnabled.value
         }
         umpManager = UMPManager(this)
         billingManager = BillingManager(this, preferences).apply {
             startConnection()
         }
         adManager = AdManager(this, umpManager, billingManager)
-        viewModel = GameViewModel(preferences, soundManager, levelManager)
+        viewModel = GameViewModel(preferences, soundManager, levelManager, leaderboardManager)
 
         // Request UMP consent before initializing ads
         umpManager.gatherConsent(this) { canRequestAds ->
@@ -84,10 +92,14 @@ class MainActivity : ComponentActivity() {
         val symbolsEnabled by preferences.colorblindSymbolsEnabled.collectAsStateWithLifecycle()
         val adsRemoved by billingManager.isAdsRemoved.collectAsStateWithLifecycle()
         val canRequestAds by umpManager.canRequestAdsState.collectAsStateWithLifecycle()
+        val topRecords by leaderboardManager.topRecords.collectAsStateWithLifecycle(emptyList())
 
-        // Sync sound setting
+        // Sync sound & vibration settings
         LaunchedEffect(soundEnabled) {
             soundManager.isSoundEnabled = soundEnabled
+        }
+        LaunchedEffect(vibrationEnabled) {
+            vibrationManager.isVibrationEnabled = vibrationEnabled
         }
 
         val currentLevel by viewModel.currentLevel.collectAsStateWithLifecycle()
@@ -95,6 +107,8 @@ class MainActivity : ComponentActivity() {
         val selectedTubeIndex by viewModel.selectedTubeIndex.collectAsStateWithLifecycle()
         val remainingUndos by viewModel.remainingUndos.collectAsStateWithLifecycle()
         val bonusTubesCount by viewModel.bonusTubesCount.collectAsStateWithLifecycle()
+        val movesCount by viewModel.movesCount.collectAsStateWithLifecycle()
+        val elapsedSeconds by viewModel.elapsedSeconds.collectAsStateWithLifecycle()
         val isLevelWon by viewModel.isLevelWon.collectAsStateWithLifecycle()
         val shouldShowInterstitial by viewModel.shouldShowInterstitial.collectAsStateWithLifecycle()
 
@@ -129,6 +143,7 @@ class MainActivity : ComponentActivity() {
                     maxUnlockedLevel = maxUnlockedLevel,
                     isAdsRemoved = adsRemoved,
                     canRequestAds = canRequestAds,
+                    topRecords = topRecords,
                     onPlayClicked = {
                         viewModel.loadLevel(maxUnlockedLevel)
                         currentScreen = AppScreen.GAME
@@ -158,11 +173,14 @@ class MainActivity : ComponentActivity() {
             AppScreen.GAME -> {
                 GameScreen(
                     viewModel = viewModel,
+                    vibrationManager = vibrationManager,
                     currentLevel = currentLevel,
                     tubes = tubes,
                     selectedTubeIndex = selectedTubeIndex,
                     remainingUndos = remainingUndos,
                     bonusTubesCount = bonusTubesCount,
+                    movesCount = movesCount,
+                    elapsedSeconds = elapsedSeconds,
                     isLevelWon = isLevelWon,
                     isSymbolsEnabled = symbolsEnabled,
                     onBack = {

@@ -39,4 +39,9 @@
     <string name="menu">Menü</string>
     <string name="back">Geri</string>
     <string name="close">Kapat</string>
+    <string name="leaderboard">Lider Tablosu</string>
+    <string name="top_scores">En İyi 5 Skor</string>
+    <string name="no_records_yet">Kayıt bulunamadı, bölüm tamamlayın!</string>
+    <string name="moves_format">%1$d Hamle</string>
+    <string name="time_format">%1$02d:%2$02d</string>
 </resources>

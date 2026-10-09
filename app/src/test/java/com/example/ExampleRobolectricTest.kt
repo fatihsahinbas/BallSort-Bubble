@@ -49,5 +49,22 @@ class ExampleRobolectricTest {
     assertEquals(4, levelManager.getColorsCount(5))
     assertTrue(levelManager.isLevelSolved(emptyList()))
   }
+
+  @Test
+  fun `test LeaderboardManager records and ordering`() = kotlinx.coroutines.runBlocking {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val leaderboard = com.example.data.LeaderboardManager(context)
+
+    leaderboard.recordLevelCompletion(level = 1, moves = 12, timeSeconds = 25)
+    leaderboard.recordLevelCompletion(level = 2, moves = 18, timeSeconds = 40)
+    leaderboard.recordLevelCompletion(level = 1, moves = 10, timeSeconds = 20) // Better score for level 1
+
+    val records = kotlinx.coroutines.flow.first(leaderboard.topRecords)
+    assertEquals(2, records.size)
+    assertEquals(2, records[0].level)
+    assertEquals(18, records[0].moves)
+    assertEquals(1, records[1].level)
+    assertEquals(10, records[1].moves)
+  }
 }
 

@@ -67,6 +67,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
+import com.example.audio.VibrationManager
 import com.example.model.Tube
 import com.example.ui.GameViewModel
 import com.example.ui.components.ConfettiEffect
@@ -76,11 +77,14 @@ import com.example.ui.components.TubeView
 @Composable
 fun GameScreen(
     viewModel: GameViewModel,
+    vibrationManager: VibrationManager,
     currentLevel: Int,
     tubes: List<Tube>,
     selectedTubeIndex: Int?,
     remainingUndos: Int,
     bonusTubesCount: Int,
+    movesCount: Int = 0,
+    elapsedSeconds: Int = 0,
     isLevelWon: Boolean,
     isSymbolsEnabled: Boolean,
     onBack: () -> Unit,
@@ -88,7 +92,6 @@ fun GameScreen(
     onRequestRewardedAd: (rewardType: String) -> Unit,
     onOpenLevels: () -> Unit
 ) {
-    val haptic = LocalHapticFeedback.current
     val snackbarHostState = remember { SnackbarHostState() }
 
     var showRestartDialog by remember { mutableStateOf(false) }
@@ -101,11 +104,7 @@ fun GameScreen(
     // Celebratory victory haptic pattern
     LaunchedEffect(isLevelWon) {
         if (isLevelWon) {
-            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
-            kotlinx.coroutines.delay(120)
-            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove)
-            kotlinx.coroutines.delay(120)
-            haptic.performHapticFeedback(androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress)
+            vibrationManager.vibrateVictory()
         }
     }
 
@@ -184,11 +183,31 @@ fun GameScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = stringResource(R.string.level_label, currentLevel),
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                    Column {
+                        Text(
+                            text = stringResource(R.string.level_label, currentLevel),
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.moves_format, movesCount),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            val minutes = elapsedSeconds / 60
+                            val seconds = elapsedSeconds % 60
+                            Text(
+                                text = stringResource(R.string.time_format, minutes, seconds),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
                 },
                 navigationIcon = {
                     IconButton(
@@ -252,9 +271,7 @@ fun GameScreen(
                             if (remainingUndos > 0) {
                                 viewModel.undoMove(
                                     onHapticFeedback = {
-                                        haptic.performHapticFeedback(
-                                            androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove
-                                        )
+                                        vibrationManager.vibrateBallPlaced()
                                     }
                                 )
                             } else {
@@ -366,14 +383,14 @@ fun GameScreen(
                                         viewModel.onTubeClicked(
                                             index = tube.id,
                                             onHapticFeedback = {
-                                                haptic.performHapticFeedback(
-                                                    androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove
-                                                )
+                                                if (selectedTubeIndex == null) {
+                                                    vibrationManager.vibrateBallSelected()
+                                                } else {
+                                                    vibrationManager.vibrateBallPlaced()
+                                                }
                                             },
                                             onInvalidHaptic = {
-                                                haptic.performHapticFeedback(
-                                                    androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress
-                                                )
+                                                vibrationManager.vibrateInvalidMove()
                                             }
                                         )
                                     }
@@ -402,14 +419,14 @@ fun GameScreen(
                                             viewModel.onTubeClicked(
                                                 index = tube.id,
                                                 onHapticFeedback = {
-                                                    haptic.performHapticFeedback(
-                                                        androidx.compose.ui.hapticfeedback.HapticFeedbackType.TextHandleMove
-                                                    )
+                                                    if (selectedTubeIndex == null) {
+                                                        vibrationManager.vibrateBallSelected()
+                                                    } else {
+                                                        vibrationManager.vibrateBallPlaced()
+                                                    }
                                                 },
                                                 onInvalidHaptic = {
-                                                    haptic.performHapticFeedback(
-                                                        androidx.compose.ui.hapticfeedback.HapticFeedbackType.LongPress
-                                                    )
+                                                    vibrationManager.vibrateInvalidMove()
                                                 }
                                             )
                                         }
@@ -490,7 +507,34 @@ fun GameScreen(
                                 textAlign = TextAlign.Center
                             )
 
-                            Spacer(modifier = Modifier.height(28.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            // Score Summary Badge
+                            Row(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(14.dp))
+                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.moves_format, movesCount),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                val minutes = elapsedSeconds / 60
+                                val seconds = elapsedSeconds % 60
+                                Text(
+                                    text = stringResource(R.string.time_format, minutes, seconds),
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.height(24.dp))
 
                             // Next Level Button
                             Button(
